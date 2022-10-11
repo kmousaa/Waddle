@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 # Create your models here.
@@ -5,4 +6,33 @@ from django.db import models
 from django.contrib.auth.models  import AbstractUser
 
 class User(AbstractUser):
-    bio = models.TextField()
+    username = models.CharField(
+        max_length = 30,
+        unique = True,
+        validators=[RegexValidator(
+            regex= r'^@\w{3,}$',
+            message='Username must consist of @ symbol followed by at least 3 alphanumericals'
+        ) ]
+    )
+
+    first_name = models.CharField(
+        blank = False,
+        unique = False,
+        max_length = 50
+    )
+
+    last_name = models.CharField(
+        blank = False,
+        unique = False,
+        max_length = 50
+    )
+
+    email = models.EmailField(
+        unique = True,
+        blank = False
+
+    )
+    bio = models.CharField(
+        max_length = 520 ,
+        blank = True
+    )
