@@ -36,5 +36,3 @@ class Command(BaseCommand):
              bio = self.faker.sentence()
 
              )
-
-        print("WARNING: the seed command is not implemented ")
