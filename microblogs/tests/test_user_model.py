@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import User
+from microblogs.models import User
 
 
 #Unit tests goes here
@@ -212,11 +212,6 @@ class UserModelTestCase(TestCase):
     def test_lname_may_not_contain_more_than_520_char(self):
         self.user.bio = 'x' * 521
         self._assert_user_is_invalid()
-
-
-
-
-
 
 
 
