@@ -28,7 +28,7 @@ class Command(BaseCommand):
             passw = ''.join(random.choice(letters) for i in range(10))
 
             obj = User.objects.create_user(
-            username = f"{fname}{lname}{random.randint(0,999)}",
+            username = f"@{fname}{lname}{random.randint(0,999)}",
              first_name = fname,
              last_name = lname,
              email = f'{fname[0].lower()}{lname.lower()}@{mails[random.randint(0,3)]}',

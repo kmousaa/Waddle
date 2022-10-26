@@ -16,9 +16,9 @@ def log_in(request):
             #extract username and pass and see if comb is is_valid
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password) #built in django
+            user = authenticate(username=username, password=password) #search for user record and see if password hash is the same, and return user
             if user is not None:
-                login(request,user)
+                login(request,user) #how?
                 return redirect('feed')
 
     form = LogInForm()
@@ -29,7 +29,8 @@ def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST) #create bound version of form with post data
         if form.is_valid():
-            form.save()
+            user = form.save()
+            login(request,user) #how?
             return redirect('feed')
 
     else:

@@ -4,9 +4,9 @@ from django.urls import reverse
 from django.contrib.auth.hashers import check_password
 from microblogs.forms import SignUpForm
 from microblogs.forms import User
+from .helpers import LogInTester
 
-
-class SignUpViewTestCase(TestCase):
+class SignUpViewTestCase(TestCase,LogInTester):
 
     """ unit tests """
     def setUp(self):
@@ -46,6 +46,7 @@ class SignUpViewTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form,SignUpForm))
         self.assertTrue(form.is_bound)
+        self.assertFalse(self._is_logged_in())
 
 
 
@@ -67,3 +68,4 @@ class SignUpViewTestCase(TestCase):
         is_pass_correct = check_password('Password123',user.password)
         #password is stored using hashing
         self.assertTrue(is_pass_correct )
+        self.assertTrue(self._is_logged_in())
