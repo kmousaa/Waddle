@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate,login
 from django.shortcuts import redirect,render
 from .forms import LogInForm,SignUpForm
 
@@ -9,6 +10,17 @@ def home(request):
 
 
 def log_in(request):
+    if request.method == 'POST':
+        form = LogInForm(request.POST)
+        if form.is_valid():
+            #extract username and pass and see if comb is is_valid
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password) #built in django
+            if user is not None:
+                login(request,user)
+                return redirect('feed')
+
     form = LogInForm()
     return render(request,'log_in.html', {'form' : form}) #view needs to be rendered with form
 

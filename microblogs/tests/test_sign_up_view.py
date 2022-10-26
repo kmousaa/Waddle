@@ -48,12 +48,6 @@ class SignUpViewTestCase(TestCase):
         self.assertTrue(form.is_bound)
 
 
-    def test_succesful_get_sign_up(self):
-        response = self.client.post(self.url,self.form_input, follow = True)
-        #follow , follows redirect and renders feed page
-        response_url = reverse('feed')
-        self.assertRedirects(response,response_url,302,target_status_code = 200)
-        self.assertTemplateUsed(response,'feed.html')
 
     def test_succesful_get_sign_up(self):
         before_count = User.objects.count()
