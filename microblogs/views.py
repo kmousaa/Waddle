@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate,login
 from django.shortcuts import redirect,render
 from .forms import LogInForm,SignUpForm
-
+from django.contrib import messages
 
 
 # Create your views heres.
@@ -20,7 +20,8 @@ def log_in(request):
             if user is not None:
                 login(request,user) #how?
                 return redirect('feed')
-
+        #Add error message
+        messages.add_message(request, messages.ERROR, "The credentials provided is invalid!")
     form = LogInForm()
     return render(request,'log_in.html', {'form' : form}) #view needs to be rendered with form
 
