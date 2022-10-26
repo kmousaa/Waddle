@@ -5,6 +5,12 @@
   <body>
     <h1>LOGIN</h1>
     <p> Page contaibs the log in view </p>
+    <form action = '{% url 'log_in' %}' method = "post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Log in">
+
+    </form>
 
   </body>
 </head>
