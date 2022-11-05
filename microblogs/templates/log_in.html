@@ -8,11 +8,10 @@
 
       <h1>LOGIN</h1>
       <p> Page contaibs the log in view </p>
-      {% for message in messages %}
-      <p><b>{{ message }}</b></p>
-      {% endfor %}
       <form action = '{% url 'log_in' %}' method = "post">
         {% csrf_token %}
+        {% include 'partials/messages.html' %}
+
         {% include 'partials/bootstrap_form.html' with form=form%}
         <input type="submit" value="Log in" class ="btn btn-primary">
 
