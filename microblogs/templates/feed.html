@@ -1,26 +1,30 @@
-<html>
-<head>
-    <title>Clucker</title>
-</head>
-  <body>
-    <h1>Feed</h1>
-    <p> Post come clucks </p>
-    <form action = '{% url 'feed' %}' method = "post">
-      {% csrf_token %}
 
-      {{ form.as_p }}
-      <input type="submit" value="Sign up">
+{% extends 'base_content.html' %}
+{% block content %}
+
+<div class = "container">
+  <div class = "row">
+    <div class = "col-sm-12 col-md-6 offset-md-3">
+
+      <h1>Feed</h1>
+      <p> Post come clucks </p>
+      <form action = '{% url 'feed' %}' method = "post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+        <input type="submit" value="Sign up">
 
       </form>
 
       <ul>
 
         {% for message in messages %}
-          <p><b>{{ message }}</b></p>
+        <p><b>{{ message }}</b></p>
         {% endfor %}
 
-    </ul>
+      </ul>
 
-  </body>
-</head>
-</html>
+    </div>
+  </div>
+</div>
+{% endblock %}
