@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect,render
-from .forms import LogInForm,SignUpForm
+from .forms import LogInForm,SignUpForm,PostForm
 from django.contrib import messages
 
 
@@ -44,4 +44,5 @@ def log_out(request):
     return redirect('home')
 
 def feed(request):
-    return render(request,'feed.html')
+    form = PostForm()
+    return render(request, 'feed.html', {'form': form})

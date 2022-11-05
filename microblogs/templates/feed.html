@@ -4,7 +4,22 @@
 </head>
   <body>
     <h1>Feed</h1>
-    <p> FEED FOR POSTS </p>
+    <p> Post come clucks </p>
+    <form action = '{% url 'feed' %}' method = "post">
+      {% csrf_token %}
+
+      {{ form.as_p }}
+      <input type="submit" value="Sign up">
+
+      </form>
+
+      <ul>
+
+        {% for message in messages %}
+          <p><b>{{ message }}</b></p>
+        {% endfor %}
+
+    </ul>
 
   </body>
 </head>
