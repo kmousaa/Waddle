@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
-
+from libgravatar import Gravatar
 # Create your models here.
 
 from django.contrib.auth.models  import AbstractUser
@@ -36,6 +36,20 @@ class User(AbstractUser):
         max_length = 520 ,
         blank = True
     )
+
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def mini_gravatar(self):
+        """Return a URL to a miniature version of the user's gravatar."""
+        return self.gravatar(size=60)
+    # his method can generate a URL to an image containing the user's gravatar
+    def gravatar(self, size=120):
+        """Return a URL to the user's gravatar."""
+        gravatar_object = Gravatar(self.email)
+        gravatar_url = gravatar_object.get_image(size=size, default='mp')
+        return gravatar_url
+
 
 class Post(models.Model):
     author = models.ForeignKey('User', null=True,on_delete=models.SET_NULL)

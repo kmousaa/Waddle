@@ -55,6 +55,12 @@ class PostForm(forms.ModelForm):
         fields = ['text']
         widgets = {'text' :forms.Textarea()} #widget to make bio field look like a text field
 
+    def save(self):
+        super().save(commit=False)
+        post = Post(
+            text = self.cleaned_data.get('text'),
+        )
+        return post
 
 
 #now if we change validation constraints within user models - form changes as well
