@@ -1,11 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
-from microblogs.models import User
+from microblogs.models import User,Post
 from microblogs.tests.helpers import reverse_with_next
 
 class ShowUserTest(TestCase):
 
-    fixtures = ['microblogs/tests/fixtures/default_user']
+
+    fixtures = [
+        'microblogs/tests/fixtures/default_user.json',
+        'microblogs/tests/fixtures/other_users.json'
+    ]
 
     def setUp(self):
         self.user = User.objects.get(username = "@johndoe")
@@ -25,13 +29,34 @@ class ShowUserTest(TestCase):
 
     def test_get_show_user_with_invalid_id(self):
         self.client.login(username = self.user.username, password="Password123")
-        url = reverse('show_user', kwargs={'user_id': self.user.id+1})
+        url = reverse('show_user', kwargs={'user_id': self.user.id+99999999})
         response = self.client.get(url, follow=True)
         response_url = reverse('user_list')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'user_list.html')
 
-    def test_get_show_user_when_not_logged_in(self):
+    def test_get_show_user_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in',self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_show_user_display_post_belongs_to_show_user_only(self):
+        self.client.login(username = self.user.username, password="Password123")
+        other_user = User.objects.get(username = '@janedoe')
+        create_posts(other_user,100,103)
+        create_posts(self.user,200,203)
+        url = reverse('show_user', kwargs={'user_id': other_user.id})
+        response = self.client.get(url)
+        for count in range(100,103):
+            self.assertContains(response, f'post__{count}') # check if response from get requests includes
+        for count in range(200,203):
+            self.assertNotContains(response, f'post__{count}') # check if response from get requests includes
+
+
+
+def create_posts(author, from_count, to_count):
+    """ Create unique numbered posts for tests"""
+    for count in range(from_count, to_count):
+        text = f'post__{count}'
+        post = Post(author=author, text=text)
+        post.save()

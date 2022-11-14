@@ -6,6 +6,7 @@ from microblogs.forms import LogInForm
 from microblogs.models import User
 from microblogs.tests.helpers import LogInTester, reverse_with_next
 
+
 class LogInViewTestCase(TestCase,LogInTester):
 
     fixtures = ['microblogs/tests/fixtures/default_user']
