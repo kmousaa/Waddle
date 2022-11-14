@@ -6,12 +6,17 @@ from django.contrib import messages
 from .models import Post, User
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
+from .helpers import login_prohibited
 
 # Create your views heres.
+
+
+
+@login_prohibited
 def home(request):
     return render(request,'home.html')
 
-
+@login_prohibited
 def log_in(request):
     # post request
     if request.method == 'POST':
@@ -32,7 +37,7 @@ def log_in(request):
     next = request.GET.get('next') or ''
     return render(request,'log_in.html', {'form' : form, 'next': next}) #view needs to be rendered with form
 
-
+@login_prohibited
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST) #create bound version of form with post data
@@ -50,6 +55,7 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+#login_required: if user logged in fucntion is applied: otherwise user is redirected
 @login_required
 def feed(request):
     form = PostForm()

@@ -94,6 +94,24 @@ class LogInViewTestCase(TestCase,LogInTester):
         self.assertEqual(messages_list[0].level,messages.ERROR)
 
 
+
+    def test_get_log_in_with_redirect_when_logged_in(self):
+        self.client.login(username = self.user.username, password="Password123")
+        response = self.client.get(self.url,follow=True) #getting the log in view
+        response_url = reverse('feed')
+        self.assertRedirects(response,response_url,302,target_status_code = 200)
+        self.assertTemplateUsed(response,'feed.html')
+
+    def test_post_log_in_with_redirect_when_logged_in(self):
+        self.client.login(username = self.user.username, password="Password123")
+        form_input = {'username' : '@wrongjohndoe', 'password' : 'WrongPassword123'}
+        response = self.client.post(self.url,form_input,follow=True) #getting the log in view
+        response_url = reverse('feed')
+        self.assertRedirects(response,response_url,302,target_status_code = 200)
+        self.assertTemplateUsed(response,'feed.html')
+
+
+
     def test_successful_log_in_with_redirect(self):
         redirect_url = reverse('user_list')
         form_input = {'username' : '@johndoe', 'password' : 'Password123', 'next': redirect_url}

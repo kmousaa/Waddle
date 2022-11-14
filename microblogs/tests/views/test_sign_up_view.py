@@ -8,6 +8,9 @@ from microblogs.tests.helpers import LogInTester
 
 class SignUpViewTestCase(TestCase,LogInTester):
 
+    fixtures = ['microblogs/tests/fixtures/default_user']
+
+
     """ unit tests """
     def setUp(self):
         self.url = reverse('sign_up')
@@ -20,6 +23,7 @@ class SignUpViewTestCase(TestCase,LogInTester):
             'new_password': 'Password123',
             'password_confirmation': 'Password123'
         }
+        self.user = User.objects.get(username = "@johndoe")
 
     def test_sign_up_url(self):
         self.assertEqual(self.url, '/sign_up/')
@@ -34,6 +38,14 @@ class SignUpViewTestCase(TestCase,LogInTester):
         form = response.context['form']
         self.assertTrue(isinstance(form,SignUpForm))
         self.assertFalse(form.is_bound)
+
+    def test_get_sign_up_with_redirect_when_logged_in(self):
+        self.client.login(username = self.user.username, password="Password123")
+        response = self.client.get(self.url,follow=True) #getting the log in view
+        response_url = reverse('feed')
+        self.assertRedirects(response,response_url,302,target_status_code = 200)
+        self.assertTemplateUsed(response,'feed.html')
+
 
     def test_unsuccesful_get_sign_up(self):
         self.form_input['username'] = 'BAD_USERNAME'
@@ -69,3 +81,14 @@ class SignUpViewTestCase(TestCase,LogInTester):
         #password is stored using hashing
         self.assertTrue(is_pass_correct )
         self.assertTrue(self._is_logged_in())
+
+
+    def test_post_sign_up_with_redirect_when_logged_in(self):
+        self.client.login(username = self.user.username, password="Password123")
+        before_count = User.objects.count()
+        response = self.client.post(self.url,self.form_input,follow=True) #getting the log in view
+        after_count = User.objects.count()
+        self.assertEqual(after_count,before_count)
+        response_url = reverse('feed')
+        self.assertRedirects(response,response_url,302,target_status_code = 200)
+        self.assertTemplateUsed(response,'feed.html')
