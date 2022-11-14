@@ -4,12 +4,12 @@ from django.test import TestCase
 from django.urls import reverse
 from microblogs.forms import LogInForm
 from microblogs.models import User
-from microblogs.tests.helpers import LogInTester
+from microblogs.tests.helpers import LogInTester, reverse_with_next
 
 class LogInViewTestCase(TestCase,LogInTester):
 
     fixtures = ['microblogs/tests/fixtures/default_user']
-    
+
     def setUp(self):
         self.url = reverse('log_in')
         self.user = User.objects.get(username = "@johndoe")
@@ -33,8 +33,27 @@ class LogInViewTestCase(TestCase,LogInTester):
         self.assertEqual(response.status_code,200)
         self.assertTemplateUsed(response,'log_in.html')
         form = response.context['form']
+        next = response.context['next']
         self.assertTrue(isinstance(form,LogInForm))
         self.assertFalse(form.is_bound)
+        self.assertFalse(next)
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list),0)
+
+
+
+#test if we can get login view with a redirect parameter
+    def test_get_log_in_with_redirect(self):
+        destination_url = reverse('user_list')
+        self.url = reverse_with_next('log_in', destination_url)
+        response = self.client.get(self.url) #getting the log in view
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response,'log_in.html')
+        form = response.context['form']
+        next = response.context['next']
+        self.assertTrue(isinstance(form,LogInForm))
+        self.assertFalse(form.is_bound)
+        self.assertEqual(next, destination_url)
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list),0)
 
@@ -73,3 +92,14 @@ class LogInViewTestCase(TestCase,LogInTester):
         self.assertEqual(len(messages_list),1)
         messages_list = list(response.context['messages'])
         self.assertEqual(messages_list[0].level,messages.ERROR)
+
+
+    def test_successful_log_in_with_redirect(self):
+        redirect_url = reverse('user_list')
+        form_input = {'username' : '@johndoe', 'password' : 'Password123', 'next': redirect_url}
+        response = self.client.post(self.url, form_input, follow = True)
+        self.assertTrue(self._is_logged_in())
+        self.assertRedirects(response,redirect_url,302,target_status_code = 200)
+        self.assertTemplateUsed(response,'user_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list),0)

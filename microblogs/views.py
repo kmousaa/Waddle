@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render
 from .forms import LogInForm,SignUpForm,PostForm
 from django.contrib import messages
@@ -12,6 +13,7 @@ def home(request):
 
 
 def log_in(request):
+    # post request
     if request.method == 'POST':
         form = LogInForm(request.POST)
         if form.is_valid():
@@ -21,11 +23,14 @@ def log_in(request):
             user = authenticate(username=username, password=password) #search for user record and see if password hash is the same, and return user
             if user is not None:
                 login(request,user) #how?
-                return redirect('feed')
+                redirect_url = request.POST.get('next') or 'feed'
+                return redirect(redirect_url)
         #Add error message
         messages.add_message(request, messages.ERROR, "The credentials provided is invalid!")
+    # get request
     form = LogInForm()
-    return render(request,'log_in.html', {'form' : form}) #view needs to be rendered with form
+    next = request.GET.get('next') or ''
+    return render(request,'log_in.html', {'form' : form, 'next': next}) #view needs to be rendered with form
 
 
 def sign_up(request):
@@ -65,6 +70,7 @@ def new_post(request):
     else:
         return HttpResponseForbidden()
 
+@login_required
 def user_list(request):
     users = User.objects.all()
     return render(request, 'user_list.html', {'users': users})
