@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from microblogs.models import User,Post
-from microblogs.tests.helpers import reverse_with_next
+from microblogs.tests.helpers import create_posts,reverse_with_next
 
 class ShowUserTest(TestCase):
 
@@ -51,12 +51,3 @@ class ShowUserTest(TestCase):
             self.assertContains(response, f'post__{count}') # check if response from get requests includes
         for count in range(200,203):
             self.assertNotContains(response, f'post__{count}') # check if response from get requests includes
-
-
-
-def create_posts(author, from_count, to_count):
-    """ Create unique numbered posts for tests"""
-    for count in range(from_count, to_count):
-        text = f'post__{count}'
-        post = Post(author=author, text=text)
-        post.save()

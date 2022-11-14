@@ -58,8 +58,10 @@ def log_out(request):
 #login_required: if user logged in fucntion is applied: otherwise user is redirected
 @login_required
 def feed(request):
-    form = PostForm()
-    return render(request, 'feed.html', {'form': form})
+    form = PostForm
+    current_user = request.user
+    posts = Post.objects.filter(author = current_user)
+    return render(request, 'feed.html', {'form': form, 'posts':posts})
 
 def new_post(request):
     if request.method == 'POST':
