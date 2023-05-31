@@ -10,7 +10,7 @@
         {{ post.author.full_name }}
       </span>
       <span class = "post-author-user-details">
-        {{ post.author.username}}
+        <a href="{% url 'show_user_feed' post.author.id %}" style="color: darkblue;">{{ post.author.username }}</a>
         &nbsp;&middot;&nbsp;
         {{ post.created_at|naturaltime }}
       </span>

@@ -60,7 +60,7 @@ def log_out(request):
 def feed(request):
     form = PostForm
     current_user = request.user
-    posts = Post.objects.filter(author = current_user)
+    posts = Post.objects.all()
     return render(request, 'feed.html', {'form': form, 'posts':posts})
 
 def new_post(request):
@@ -83,6 +83,18 @@ def new_post(request):
 def user_list(request):
     users = User.objects.all()
     return render(request, 'user_list.html', {'users': users})
+
+
+@login_required
+def show_user_feed(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        posts = Post.objects.filter(author=user)
+    except ObjectDoesNotExist:
+        return redirect('feed')
+    else:
+        return render(request, 'show_user.html', {'user': user , 'posts' : posts})
+
 
 @login_required
 def show_user(request, user_id):
