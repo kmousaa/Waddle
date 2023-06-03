@@ -1,23 +1,39 @@
 {% load humanize %}
+
+
 <tr>
   <td>
-    <img src = "{{ post.author.mini_gravatar }}" alt = "Gravatar of user" class = "rounded-circle">
+    <img src="{{ post.author.mini_gravatar }}" alt="Gravatar of user" class="rounded-circle">
   </td>
 
   <td>
-    <p class = "post-author">
-      <span class = "post-author-fullname">
+    <p class="post-author">
+      <span class="post-author-fullname">
         {{ post.author.full_name }}
       </span>
-      <span class = "post-author-user-details">
+      <span class="post-author-user-details">
         <a href="{% url 'show_user_feed' post.author.id %}" style="color: darkblue;">{{ post.author.username }}</a>
         &nbsp;&middot;&nbsp;
         {{ post.created_at|naturaltime }}
       </span>
     </p>
-    <p>
+    <div class=truncated>
       {{ post.text }}
+    </div>
+    <p> 
+     
+      Likes: {{ post.total_likes }} 
+      
+      <a class="btn btn-link btn-sm" href="{% url 'like_post' post.pk %}">
+       
+        {% if user in post.likes.all %}
+        <i class="bi bi-heart-fill text-danger bg-transparent"></i>
+        {% else %}
+        <i class="bi bi-heart text-danger bg-transparent"></i>
+        {% endif %}
+        
+      </a>
+      
     </p>
-
-  </td>
+  </td>  
 </tr>

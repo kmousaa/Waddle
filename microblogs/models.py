@@ -52,6 +52,7 @@ class User(AbstractUser):
 
 
 class Post(models.Model):
+
     author = models.ForeignKey('User', null=True,on_delete=models.SET_NULL)
 
     text = models.CharField(
@@ -60,5 +61,15 @@ class Post(models.Model):
     created_at = models.DateTimeField(
          auto_now_add=True
     )
+
+    # user can like many posts, and post can have many likes
+    likes = models.ManyToManyField(
+        User, 
+        related_name = "user_post"
+    )
+
+    def total_likes(self):
+        return self.likes.count()
+
     class Meta:
          ordering = ["created_at"]

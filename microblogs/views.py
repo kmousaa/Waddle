@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect,render
+from django.shortcuts import redirect,render, get_object_or_404
 from .forms import LogInForm,SignUpForm,PostForm
 from django.contrib import messages
 from .models import Post, User
@@ -27,11 +27,12 @@ def log_in(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password) #search for user record and see if password hash is the same, and return user
             if user is not None:
-                login(request,user) #how?
+                login(request,user) #how
                 redirect_url = request.POST.get('next') or 'feed'
                 return redirect(redirect_url)
         #Add error message
         messages.add_message(request, messages.ERROR, "The credentials provided is invalid!")
+        
     # get request
     form = LogInForm()
     next = request.GET.get('next') or ''
@@ -45,7 +46,6 @@ def sign_up(request):
             user = form.save()
             login(request,user) #how?
             return redirect('feed')
-
     else:
         form = SignUpForm()
 
@@ -61,7 +61,8 @@ def feed(request):
     form = PostForm
     current_user = request.user
     posts = Post.objects.all()
-    return render(request, 'feed.html', {'form': form, 'posts':posts})
+    return render(request, 'feed.html', {'form': form, 'posts':posts , 'request_user': request.user})
+
 
 def new_post(request):
     if request.method == 'POST':
@@ -83,6 +84,28 @@ def new_post(request):
 def user_list(request):
     users = User.objects.all()
     return render(request, 'user_list.html', {'users': users})
+
+@login_required
+def like_post(request, pk):
+    try:
+        post = Post.objects.get(id=pk)
+        liked = False
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            liked = False
+            
+        else:
+            post.likes.add(request.user)
+            liked = True
+
+    except ObjectDoesNotExist:
+        return redirect('feed')
+    else:
+        return redirect('feed')
+
+def is_post_liked(post, user):
+    """Checks if the user liked the post"""
+    return post.likes.filter(id=user.id).exists()
 
 
 @login_required

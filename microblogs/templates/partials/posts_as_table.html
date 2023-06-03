@@ -1,5 +1,5 @@
 <table class="table">
   {% for post in posts reversed %}
-    {% include 'partials/posts_as_table_row.html' with post=post %}
+    {% include 'partials/posts_as_table_row.html' with post=post user=user%}
    {% endfor %}
 </table>

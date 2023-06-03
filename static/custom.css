@@ -6,6 +6,20 @@
   border-radius: 0px;
 }
 
+ 
+
+p {
+  /* the line height must be known */
+  line-height: 2.5ex;
+}
+
+p.truncated {
+  /* restrict the height to three lines */
+  height: calc(2.5ex * 3);
+
+  /* hide the overflow */
+  overflow: hidden;
+}
 
 /*
  * Cover page

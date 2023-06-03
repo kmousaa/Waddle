@@ -12,7 +12,7 @@
     </div>
     <div class="col-xs-12 col-lg-6 col-xl-8">
       <h1>Feed</h1>
-        {% include 'partials/posts_as_table.html' with posts=posts %}
+        {% include 'partials/posts_as_table.html' with posts=posts user=request_user%}
     </div>
   </div>
 </div>

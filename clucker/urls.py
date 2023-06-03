@@ -27,7 +27,6 @@ urlpatterns = [
     path('new_post/',views.new_post, name = 'new_post'),
     path('users/', views.user_list, name='user_list'),
     path('user/<int:user_id>', views.show_user, name='show_user'),
-    path('user/<int:user_id>', views.show_user, name='show_user_feed'),
-
-
+    path('user/<int:user_id>', views.show_user_feed, name='show_user_feed'),
+    path('like/<int:pk>', views.like_post, name='like_post'),
 ]
