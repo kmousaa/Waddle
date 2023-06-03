@@ -33,7 +33,7 @@ class User(AbstractUser):
 
     )
     bio = models.CharField(
-        max_length = 520 ,
+        max_length = 160 ,
         blank = True
     )
 

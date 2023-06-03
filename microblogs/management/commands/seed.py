@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from microblogs.models import User
+from microblogs.models import User, Post
+from .generate_tweets import generateTweets
+
 
 import random
 import string
@@ -31,8 +33,11 @@ class Command(BaseCommand):
             username = f"@{fname}{lname}{random.randint(0,999)}",
              first_name = fname,
              last_name = lname,
-             email = f'{fname[0].lower()}{lname.lower()}@{mails[random.randint(0,3)]}',
+             email = f'{fname[0].lower()}{lname.lower()}{random.randint(0,100)}@{mails[random.randint(0,3)]}',
              password = f'{passw}',
              bio = self.faker.sentence()
-
              )
+
+           
+        
+        generateTweets()

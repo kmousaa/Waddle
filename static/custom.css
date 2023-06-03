@@ -16,7 +16,6 @@ p {
 p.truncated {
   /* restrict the height to three lines */
   height: calc(2.5ex * 3);
-
   /* hide the overflow */
   overflow: hidden;
 }

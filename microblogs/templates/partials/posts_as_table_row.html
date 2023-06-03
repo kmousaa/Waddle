@@ -12,14 +12,12 @@
         {{ post.author.full_name }}
       </span>
       <span class="post-author-user-details">
-        <a href="{% url 'show_user_feed' post.author.id %}" style="color: darkblue;">{{ post.author.username }}</a>
+        <a href="{% if post.author.id %}{% url 'show_user_feed' post.author.id %}{% endif %}" style="color: darkblue;">{{ post.author.username }}</a>
         &nbsp;&middot;&nbsp;
         {{ post.created_at|naturaltime }}
       </span>
     </p>
-    <div class=truncated>
       {{ post.text }}
-    </div>
     <p> 
      
       Likes: {{ post.total_likes }} 
