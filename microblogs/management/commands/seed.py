@@ -38,6 +38,4 @@ class Command(BaseCommand):
              bio = self.faker.sentence()
              )
 
-           
-        
         generateTweets()

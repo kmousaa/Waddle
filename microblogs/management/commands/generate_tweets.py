@@ -269,12 +269,16 @@ def generateTweets():
         Post.objects.create(author=obj, text=tweet)
 
     
-
-
     for _ in range(100):
         rand_choice = random.randint(1,4)
         if (rand_choice == 1):
             footballerTweet()
         else: 
             normalTweet()
+
+    for _ in range (1500):
+        user = User.objects.order_by('?').first()
+        post = Post.objects.order_by('?').first()
+        post.likes.add(user)
+
                     

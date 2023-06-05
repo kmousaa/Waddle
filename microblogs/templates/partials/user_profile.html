@@ -9,8 +9,22 @@
 </div>
 <div class="row content">
   <div class="col-12">
+    
+    <button type="button" class="btn btn-primary align flex p-2">
+      <i class="bi bi-person-plus-fill"></i>
+    </button>
+
+    <button type="button" class="btn btn-primary align flex p-2">
+      <i class="bi bi-people-fill"></i> Followers <span class="badge badge-light"> N/A </span>
+    </button>
+
+    <button type="button" class="btn btn-danger align flex p-2">
+      <i class="bi bi-heart-fill p-2"></i>   Likes <span class="badge badge-light"> {{ user.total_likes }}</span>
+    </button>
+
     <br/>
-    <p style = "font-weight: bold;"> Bio: </p>
+    <br/>
+    {% comment %} <p style = "font-weight: bold;"> Bio: </p> {% endcomment %}
     <p style="white-space: normal; word-wrap: break-word; max-width: 100%;">{{ user.bio }}</p>
   </div>
 </div>

@@ -37,6 +37,13 @@ class User(AbstractUser):
         blank = True
     )
 
+    follows = models.ManyToManyField(
+        "self", 
+        related_name = "user_follows"
+    )
+
+    
+
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -49,6 +56,7 @@ class User(AbstractUser):
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
         return gravatar_url
+
 
 
 class Post(models.Model):
@@ -67,6 +75,8 @@ class Post(models.Model):
         User, 
         related_name = "user_post"
     )
+    
+
 
     def total_likes(self):
         return self.likes.count()

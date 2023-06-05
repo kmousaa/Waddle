@@ -7,6 +7,8 @@ from .models import Post, User
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
 from .helpers import login_prohibited
+from django.db.models import Count
+
 
 # Create your views heres.
 
@@ -89,23 +91,29 @@ def user_list(request):
 def like_post(request, pk):
     try:
         post = Post.objects.get(id=pk)
-        liked = False
         if post.likes.filter(id=request.user.id).exists():
-            post.likes.remove(request.user)
-            liked = False
-            
+            post.likes.remove(request.user)  
         else:
             post.likes.add(request.user)
-            liked = True
+    except ObjectDoesNotExist:
+        return redirect('feed')
+    else:
+       return redirect(request.META.get('HTTP_REFERER', 'feed'))
+      
 
+@login_required
+def follows_user(request, pk):
+    try:
+        user = User.objects.get(id=pk)
+        if user.follows.filter(id=request.user.id).exists():
+            user.follows.remove(request.user)  
+        else:
+            post.follows.add(request.user)      
     except ObjectDoesNotExist:
         return redirect('feed')
     else:
         return redirect('feed')
 
-def is_post_liked(post, user):
-    """Checks if the user liked the post"""
-    return post.likes.filter(id=user.id).exists()
 
 
 @login_required
@@ -116,15 +124,19 @@ def show_user_feed(request, user_id):
     except ObjectDoesNotExist:
         return redirect('feed')
     else:
-        return render(request, 'show_user.html', {'user': user , 'posts' : posts})
+        return render(request, 'show_user.html', {'user': user , 'posts' : posts, 'request_user': request.user})
 
 
 @login_required
 def show_user(request, user_id):
+
     try:
-        user = User.objects.get(id=user_id)
+        user = get_object_or_404(
+            User.objects.annotate(total_likes=Count('post__likes')), pk=user_id
+        )
         posts = Post.objects.filter(author=user)
     except ObjectDoesNotExist:
         return redirect('user_list')
     else:
-        return render(request, 'show_user.html', {'user': user , 'posts' : posts})
+        return render(request, 'show_user.html', {'user': user , 'posts' : posts, 'request_user': request.user})
+        
