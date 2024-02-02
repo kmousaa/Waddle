@@ -1,1 +1,3 @@
-Go to the outermost directory and run `python3 manage.py runserver` and go to the adress the terminal shows
+- Running: Go to the outermost directory and run `python3 manage.py runserver` and go to the adress the terminal shows
+- Seed the database with fake users: `python3 manage.py seed`
+- Unseed the database: `python3 manage.py unseed`
