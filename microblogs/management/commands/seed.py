@@ -38,4 +38,16 @@ class Command(BaseCommand):
              bio = self.faker.sentence()
              )
 
+        # generates random tweets and assigns likes randomly to users
         generateTweets()
+
+
+        # randomly makes users follow each other
+        for _ in range (1500):
+            user = User.objects.order_by('?').first()
+            other_user = User.objects.order_by('?').first()
+            user.follow(other_user)
+
+
+
+

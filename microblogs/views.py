@@ -7,7 +7,8 @@ from .models import Post, User
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
 from .helpers import login_prohibited
-from django.db.models import Count
+from django.db.models import Count, Sum 
+
 
 
 # Create your views heres.
@@ -63,7 +64,8 @@ def feed(request):
     form = PostForm
     current_user = request.user
     posts = Post.objects.all()
-    return render(request, 'feed.html', {'form': form, 'posts':posts , 'request_user': request.user})
+    authors= list(current_user.follows.all()) + [current_user]
+    return render(request, 'feed.html', {'form': form, 'posts':posts , 'request_user': current_user})
 
 
 def new_post(request):
@@ -102,17 +104,30 @@ def like_post(request, pk):
       
 
 @login_required
-def follows_user(request, pk):
+def follow_user(request, pk):
     try:
         user = User.objects.get(id=pk)
         if user.follows.filter(id=request.user.id).exists():
             user.follows.remove(request.user)  
         else:
-            post.follows.add(request.user)      
+            user.follows.add(request.user)
+   
     except ObjectDoesNotExist:
         return redirect('feed')
     else:
-        return redirect('feed')
+       return redirect(request.META.get('HTTP_REFERER', 'feed'))
+
+
+
+def show_followers(request, user_id):
+    try:
+        user = get_object_or_404(User, id=user_id)
+        posts = Post.objects.filter(author=user)
+        follower_list = user.follows.all()
+    except ObjectDoesNotExist:
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        return render(request, 'followers_list.html', {'user': user, 'posts': posts, 'request_user': request.user, 'follower_list': follower_list})
 
 
 
@@ -132,11 +147,14 @@ def show_user(request, user_id):
 
     try:
         user = get_object_or_404(
-            User.objects.annotate(total_likes=Count('post__likes')), pk=user_id
+           User.objects.annotate(total_likes=Count('post__likes')), pk=user_id
         )
         posts = Post.objects.filter(author=user)
+        total_follows = user.follows.count()
+        
+
     except ObjectDoesNotExist:
         return redirect('user_list')
     else:
-        return render(request, 'show_user.html', {'user': user , 'posts' : posts, 'request_user': request.user})
+        return render(request, 'show_user.html', {'user': user , 'posts' : posts, 'request_user': request.user , 'total_follows':total_follows})
         

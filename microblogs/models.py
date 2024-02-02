@@ -39,10 +39,13 @@ class User(AbstractUser):
 
     follows = models.ManyToManyField(
         "self", 
-        related_name = "user_follows"
+        related_name = "user_follows",
+        symmetrical=False
     )
 
-    
+    def follow(self, user):
+        if not self.follows.filter(id=user.id).exists() and self != user:
+            self.follows.add(user)
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
@@ -73,10 +76,10 @@ class Post(models.Model):
     # user can like many posts, and post can have many likes
     likes = models.ManyToManyField(
         User, 
-        related_name = "user_post"
+        related_name = "user_post",
+
     )
     
-
 
     def total_likes(self):
         return self.likes.count()

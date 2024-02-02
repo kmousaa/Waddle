@@ -1,6 +1,6 @@
 <div class="row content">
   <div class="col-12">
-    <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" >
+    <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image">
     <div class="profile-text">
       <h3 class="profile-title">{{ user.full_name }}</h3>
       <p class="profile-username">{{ user.username }}</p>
@@ -9,23 +9,35 @@
 </div>
 <div class="row content">
   <div class="col-12">
-    
-    <button type="button" class="btn btn-primary align flex p-2">
-      <i class="bi bi-person-plus-fill"></i>
-    </button>
+    {% if request_user != user %}
 
-    <button type="button" class="btn btn-primary align flex p-2">
-      <i class="bi bi-people-fill"></i> Followers <span class="badge badge-light"> N/A </span>
+      {% if request_user not in user.follows.all %}
+        <button type="button" class="btn btn-primary flex p-2" onclick="window.location.href='{% url 'follow_user' user.pk %}'">
+          <i class="bi bi-person-plus-fill"></i> 
+        </button>
+      {% elif user in request_user.follows.all %}
+        <button type="button" class="btn btn-success flex p-2" onclick="window.location.href='{% url 'follow_user' user.pk %}'">
+          <i class="bi bi-person-hearts"></i> 
+        </button>
+      {% else %}
+        <button type="button" class="btn btn-success flex p-2" onclick="window.location.href='{% url 'follow_user' user.pk %}'">
+          <i class="bi bi-person-check-fill"></i> 
+        </button>
+      {% endif %}
+      
+    {% endif %}
+    
+    <button type="button" class="btn btn-primary align flex p-2" onclick="window.location.href='{% url 'show_followers' user.pk %}'">
+      <i class="bi bi-people-fill"></i> Followers <span class="badge badge-light">{{ total_follows }}</span>
     </button>
 
     <button type="button" class="btn btn-danger align flex p-2">
-      <i class="bi bi-heart-fill p-2"></i>   Likes <span class="badge badge-light"> {{ user.total_likes }}</span>
+      <i class="bi bi-heart-fill p-2"></i> Likes <span class="badge badge-light">{{ user.total_likes }}</span>
     </button>
 
     <br/>
     <br/>
-    {% comment %} <p style = "font-weight: bold;"> Bio: </p> {% endcomment %}
+   
     <p style="white-space: normal; word-wrap: break-word; max-width: 100%;">{{ user.bio }}</p>
   </div>
 </div>
-
